@@ -1,0 +1,22 @@
+id: gcp_taxi_foreach
+namespace: zoomcamp
+
+tasks:
+  - id: for_each_taxis
+    type: io.kestra.plugin.core.flow.ForEach
+    values: ["green", "yellow"]
+    concurrencyLimit: 1
+    tasks:
+      - id: for_each_months
+        type: io.kestra.plugin.core.flow.ForEach
+        values: [ '01', '02', '03', '04', '05', '06', '07']
+        concurrencyLimit: 1
+        tasks:
+          - id: call_subflow
+            type: io.kestra.plugin.core.flow.Subflow
+            namespace: zoomcamp
+            flowId: gcp_taxi
+            inputs:
+              month: "{{taskrun.value}}"
+              taxi: "{{parent.taskrun.value}}"
+              year: "2021"
